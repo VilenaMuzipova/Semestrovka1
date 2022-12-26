@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-6">
+             {% for image_item in product.productimage_set.all %}
+                 <div class="product-image-item">
+                     <img src="{{ image_item.image.url }}" class="img-responsive">
+                 </div>
+             {% endfor %}
+        </div>
+
+        <div class="col-lg-6">
+            <h1 class="text-center">
+                {{ product.name }}
+            </h1>
+            <div class="">
+                <p>
+                    Price:{{ product.price }}
+                </p>
+            </div>
+            <div class="">
+                {{ product.description }}
+            </div>
+        </div>
+        <div>
+              <form id="form_buying_product" class="form-inline" action="{% url 'basket_adding' %}">{% csrf_token %}
+                <div class="form-group">
+                    <input type="number" class="form-control" name="number" id="number">
+                </div>
+
+
+                    <div class="form-group">
+                        <button type="submit" id="submit_btn" class="btn btn-success btn-buy"
+                            data-product_id = "{{ product.id }}"
+                            data-name = "{{ product.name }}"
+                            data-price = "{{ product.price }}"
+
+                        >
+                            Купить
+                        </button>
+                    </div>
+
+            </form>
+        </div>
+
+
+
+
+        {% with comments.count as total_comments %}
+    <h2>
+        {{ total_comments }} comment{{ total_comments|pluralize }}
+    </h2>
+{% endwith %}
+
+{% if new_comment %}
+    <h2>Ваш комментарий был добавлен.</h2>
+{% else %}
+    <h2>Добавить новый комментарий</h2>
+    <form action="." method="post">
+        {{ comment_form.as_p }}
+        {% csrf_token %}
+        <p><input type="submit" value="Добавить комментарий"></p>
+    </form>
+{% endif %}
+
+{% for comment in comments %}
+    <div class="comment">
+        <p class="info">
+            Comment {{ forloop.counter }} by {{ comment.name }}
+            {{ comment.created }}
+        </p>
+        {{ comment.body|linebreaks }}
+    </div>
+{% empty %}
+    <p>Пока нет комментариев.</p>
+{% endfor %}
+
+
+
+
+    </div>
+{% endblock %}
+
+
+
